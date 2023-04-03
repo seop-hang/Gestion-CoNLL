@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>CONLL-U</title>
+  <script type="text/javascript" src="../js/jquery-3.6.1.min.js"></script>
+  <!-- importer le bootstrap -->
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <script src="../js/bootstrap.min.js"></script>
+  <!-- importer le home.css -->
+  <link rel="stylesheet" href="../css/home.css">
+</head>
+<body>
+  <div class="top">
+    <div class="box-top">
+      <h1 class="title">CoNLL-U</h1>
+      <div class="logout-area">
+        <div class="userinfo"></div>
+        <div>
+          <button type="button" class="btn btn-default btn-md" value="logout">
+            <svg t="1680019731901" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2592" width="30" height="30"><path d="M85.333333 256a85.333333 85.333333 0 0 1 85.333334-85.333333h384a85.333333 85.333333 0 0 1 85.333333 85.333333v85.333333a42.666667 42.666667 0 1 1-85.333333 0V256H170.666667v512h384v-85.333333a42.666667 42.666667 0 1 1 85.333333 0v85.333333a85.333333 85.333333 0 0 1-85.333333 85.333333H170.666667a85.333333 85.333333 0 0 1-85.333334-85.333333V256z m652.501334 97.834667a42.666667 42.666667 0 0 1 60.330666 0l128 128a42.666667 42.666667 0 0 1 0 60.330666l-128 128a42.666667 42.666667 0 0 1-60.330666-60.330666L793.002667 554.666667H384a42.666667 42.666667 0 1 1 0-85.333334h409.002667l-55.168-55.168a42.666667 42.666667 0 0 1 0-60.330666z" fill="#2c2c2c" p-id="2593"></path></svg></span>
+          </button>
+        </div> 
+      </div>
+    </div>  
+  </div>
+  <div class="cover"></div>
+  <div class="main">
+    <div class="choices">
+        <button class="active">HOME</button>
+        <button class="fichiers-btn">FICHIERS</button>
+        <button class="rechercher-btn">RECHERCHER</button>
+    </div>
+    <div class="content">
+      <br/>
+      <h3>Introduction de CoNLL</h3><br/>
+      <div>Le format CoNLL, proposé par la Conference on Computational Natural Language Learning (né ainsi son nom), est un format standard pour la représentation de données annotées en linguistique informatique, notamment pour les tâches de segmentation en phrases, d'analyse morpho-syntaxique, d’analyse de la grammaire et de reconnaissance d'entités nommées. Le format CoNLL a été développé pour faciliter la comparaison et l'évaluation de différents systèmes de traitement automatique du langage naturel (TALN). Vu que CoNLL est un format qui est facile à traiter et analyser, et qui fournit aux chercheurs un standard unitaire pour qu’ils puissent échanger et partager les données facilement, il est ainsi devenu l’un des formats des données les plus couramment utilisés dans le domaine du TAL. <br/><br/>
+        Le format CoNLL présente des colonnes, chaque colonne représentant une propriété linguistique différente. Par exemple, pour une tâche d'analyse morpho-syntaxique, chaque ligne représente un mot et chaque colonne représente une propriété telle que le lemme, la forme fléchie, la nature, le numéro de dépendance syntaxique et le genre, etc. A l’aide de certains outils à l’exemple de UDPipe, il est possible de générer automatiquement des phrases et des textes annotés en format CoNLL-U. Suivant un exemple de données au format CoNLL généré automatiquement par UDPipe : <br/><br/>
+        <img src="../images/intro1.png"><br/>
+        Le format CoNLL est souvent utilisé pour les tâches d'évaluation, où les données annotées sont divisées en ensembles d'apprentissage et de test, et où les performances des différents systèmes de traitement automatique du langage naturel sont comparées en fonction de leurs résultats sur les ensembles de test. Le format CoNLL est également utilisé pour l'annotation manuelle de données linguistiques, ce qui facilite la création de corpus de textes annotés pour la recherche en linguistique computationnelle. <br/><br/>
+      </div>
+      <h3>Applications du format CoNLL</h3><br/>
+      <div>
+        Avec sa polyvalence et sa flexibilité, le format CoNLL est employé couramment dans le domaine du TAL pour de nombreuses tâches et langues. Plus précisément, voici quelques exemples de l’utilisation du format CoNLL : <br/><br/>
+        <ul>
+          <li>Étiquetage grammatical: Le format CoNLL peut être utilisé pour l'étiquetage grammatical,   Il donne à chaque mot une étiquette, qui est employée pour analyser la nature lexicale de chaque mot du texte, ce qui aide l'ordinateur à mieux comprendre le texte.</li><br/>
+          <li>Reconnaissance des entités nommées : Dans le format CoNLL, chaque token comporte un étiquette de l’entité nommée qui sert à identifier le nom des gens, des endroits et des instituts. Ces étiquetages nous aident à extraire les informations des entités dans le texte, permettant à la  machine de mieux comprendre le texte et d’améliorer ainsi la performance de traitement automatique du langage naturel.</li><br/>
+          <li>Analyse en dépendance：Sous le CoNLL format，chaque mot porte une étiquette de dépendance qui identifie la relation grammaticale entre le mot étiqueté et d'autres mots. Ces étiquetages sont destinés à construire l'arbre de dépendance du texte, ce qui aide le système à reconnaître la structure grammaticale.<br/><br/><img src="../images/intro2.png"></li>
+          <li>Etiquetage des rôles sémantiques : le format CoNLL sert aussi à étiqueter les rôles sémantiques avec des tokens portant une étiquette sémantique. De cette façon, la machine comprend mieux la signification de chaque token dans la phrase et se débrouille mieux pour la compréhension du texte.</li>
+        </ul>
+      </div>
+      <h3>Variantes de CoNLL</h3><br/>
+      <div>
+        Il existe plusieurs variantes du format CoNLL, qui ont été développées ayant pour but de réaliser de différentes tâches de linguistique informatique. Voici quelques-unes des variantes les plus courantes : <br/><br/>
+        <ol>
+          <li>CoNLL-2000 : C'est la première variante du format CoNLL, qui a été introduite pour la segmentation en groupes nominaux (chunks) lors de la Conférence sur l'apprentissage automatique en langage naturel de l'an 2000. </li><br/>
+          <li>CoNLL-2003 : Cette variante du format CoNLL a été développée pour la tâche de reconnaissance d'entités nommées (Named Entity Recognition) lors de la Conférence sur l'apprentissage automatique en langage naturel de 2003. Le format CoNLL-2003 comprend des colonnes pour le mot, le POS-tag, l'étiquette de chunk et l'étiquette d'entité nommée.</li><br/>
+          <li>CoNLL-X: Ce format CoNLL a été introduit en 2006 pour l’analyse morpho-syntaxique et l’analyse syntaxique en dépendance. Le format CoNLL-X (pour eXtended) comprend des colonnes, où les catégories grammaticales, les caractéristiques morphologiques, le POS-tag, l’étiquetage de dépendance syntaxique sont annotés.</li><br/>
+          <li>CoNLL-2003 : Cette variante du format CoNLL a été développée pour la tâche de reconnaissance d'entités nommées (Named Entity Recognition) lors de la Conférence sur l'apprentissage automatique en langage naturel de 2003. Le format CoNLL-2003 comprend des colonnes pour le mot, le POS-tag, l'étiquette de chunk et l'étiquette d'entité nommée.</li><br/>
+        </ol>
+        Ces différentes variantes du format CoNLL ont été développées pour répondre à des besoins spécifiques dans la recherche en linguistique informatique, et sont souvent utilisées dans le cadre de compétitions et d'évaluations de systèmes de traitement automatique du langage naturel.
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  $(function() {
+    if (localStorage.getItem('username')){
+      $(".userinfo").text("Bienvenue, "+localStorage.getItem('username'));
+    }  
+  });
+  $(".fichiers-btn").on({
+    "click":()=>window.location.href="./fichiers.html"
+  })
+  $(".rechercher-btn").on({
+    "click":()=>window.location.href="./rechercher.html"
+  })
+  
+  $(".logout-area button").on("click",()=>{
+    localStorage.removeItem('token')
+    window.location.href="../index.html"
+  })
+</script>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>CONLL-U</title>
+  <script type="text/javascript" src="../js/jquery-3.6.1.min.js"></script>
+  <!-- importer le bootstrap -->
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <script src="../js/bootstrap.min.js"></script>
+  <!-- importer le home.css -->
+  <link rel="stylesheet" href="../css/home.css">
+  <!-- importer axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../js/axios.js"></script>
+  <!-- importer le iconfont.css -->
+  <link rel="stylesheet" href="../font/iconfont/iconfont.css">
+  <!-- importer le fichier.css -->
+  <link rel="stylesheet" href="../css/fichiers.css">
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="popup">
+		<label for="language">Langue :</label>
+		<div class="lang_choices"></div>
+
+    <label for="annotations">Annotations :</label>
+    <div class="anno_choices">
+      <input type="checkbox" name="annotations" value="IDTOK">IDTOK
+      <input type="checkbox" name="annotations" value="FORM">FORM
+      <input type="checkbox" name="annotations" value="LEMMA">LEMMA
+      <input type="checkbox" name="annotations" value="UPOS">UPOS
+      <input type="checkbox" name="annotations" value="XPOS">XPOS
+      <input type="checkbox" name="annotations" value="FEATS">FEATS
+      <input type="checkbox" name="annotations" value="HEAD">HEAD
+      <input type="checkbox" name="annotations" value="DEPREL">DEPREL
+      <input type="checkbox" name="annotations" value="DEPS">DEPS
+      <input type="checkbox" name="annotations" value="MISC">MISC
+    </div>
+    
+    <label for="year">Select une année :</label>
+    <div class="year_choices"></div>
+    
+    <div class="buttons">
+      <button id="confirmePopup">Confirmer</button>
+      <button id="closePopup">Supprimer</button>
+    </div>
+	</div>
+  <div class="confirmerPopup">
+    <div class="confirmReq">Confirmez-vous la supprime de ce fichier ?</div>
+    <div class="buttons">
+      <button id="confirmeDel">Confirmer</button>
+      <button id="closeDel">Supprimer</button>
+    </div>
+  </div>
+  <div class="downloadPopup">
+    <div class="confirmReq">Vous voulez télécharger le fichier sous quel format ?</div>
+    <div class="formatChoices">
+      <input type="radio" id="formatChoice" name="format" value="CoNLL-U">CoNLL-U
+      <input type="radio" id="formatChoice" name="format" value="TXT">TXT
+    </div>
+    <div class="buttons">
+      <button id="confirmDownload">Confirmer</button>
+      <button id="closeDownload">Supprimer</button>
+    </div>
+  </div>
+
+  <div class="cover"></div>
+  <div class="top">
+    <div class="box-top">
+      <h1 class="title">CoNLL-U</h1>
+      <div class="logout-area">
+        <div class="userinfo"></div>
+        <div>
+          <button type="button" class="btn btn-default btn-md" value="logout">
+            <svg t="1680019731901" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2592" width="30" height="30"><path d="M85.333333 256a85.333333 85.333333 0 0 1 85.333334-85.333333h384a85.333333 85.333333 0 0 1 85.333333 85.333333v85.333333a42.666667 42.666667 0 1 1-85.333333 0V256H170.666667v512h384v-85.333333a42.666667 42.666667 0 1 1 85.333333 0v85.333333a85.333333 85.333333 0 0 1-85.333333 85.333333H170.666667a85.333333 85.333333 0 0 1-85.333334-85.333333V256z m652.501334 97.834667a42.666667 42.666667 0 0 1 60.330666 0l128 128a42.666667 42.666667 0 0 1 0 60.330666l-128 128a42.666667 42.666667 0 0 1-60.330666-60.330666L793.002667 554.666667H384a42.666667 42.666667 0 1 1 0-85.333334h409.002667l-55.168-55.168a42.666667 42.666667 0 0 1 0-60.330666z" fill="#2c2c2c" p-id="2593"></path></svg></span>
+          </button>
+        </div> 
+      </div>
+    </div>  
+  </div>
+  <div class="main">
+    <div class="choices">
+        <button class="home-btn">HOME</button>
+        <button class="active">FICHIERS</button>
+        <button class="visualisation-btn">VISUALISATION</button>
+        <button class="inserer-btn">INSERER</button>
+        <button class="rechercher-btn">RECHERCHER</button>
+    </div>
+    
+    <div class="content">
+    </div>  
+  </div>
+</body>
+
+<script>
+  // la fonction pour obtenir la liste de fichiers dans MySQL
+  var getFileList=function(){
+    axios.get('../requests/reqFiles.php').then(function(response){
+      $(".content").empty()
+      data=response.data.message;
+      tablehead=`<thead><tr><th colspan='6'>La Liste des Fichiers<button class="filtre">Filtrer la liste</button></th></tr></ul></thead>`
+      tabletitle=`<tr class="tabletitle"><td>No</td><td>Propriétaire</td><td>Nom_Fichier</td><td>Langage</td><td>Année</td><td>Opération</td></tr>`
+      btn_delete="<button class='supprimer'><i class='iconfont icon-shanchu'></i></button>"
+      btn_afficher="<button class='afficher'><i class='iconfont icon-search'></i></button>"
+      btn_download="<button class='download'><i class='iconfont icon-download'></i></button>"
+      tablelines=""
+      $.each(data,(index,filedata)=>{
+          tablelines+=`<tr><td>${index+1}</td><td>${filedata.username}</td><td>${filedata.filename}</td><td>${filedata.language}</td><td>${filedata.year}</td><td>${btn_afficher}${btn_delete}${btn_download}</td></tr>`
+      })
+      $(".content").html(`<table>${tablehead}<tbody>${tabletitle}${tablelines}</tbody></table>`)
+    })
+  }
+
+  // obtenir le nom de l'utilisateur
+  $(function() {
+    if (localStorage.getItem('username')){
+      $(".userinfo").text("Bienvenue, "+localStorage.getItem('username'));
+    }  
+  });
+
+  //$(getFileList);
+
+  //le changement du page web
+  $(".home-btn").on({
+    "click":()=>window.location.href="./home.html"
+  })
+  $(".rechercher-btn").on({
+    "click":()=>window.location.href="./rechercher.html"
+  })
+  $(".inserer-btn").on({
+    "click":()=>window.location.href="./inserer.html"
+  })
+
+  // filtrer la liste des fichiers
+  $(".content").on("click",".filtre",()=>{
+      $(".overlay").css("display","block")
+      $('.popup').css("display","block")
+      axios.get('../requests/reqChoices.php').then(function(response){
+        $(".lang_choices").empty()
+        $('.year_choices').empty()
+        data=response.data.message
+        $.each(data.languages,(index,lang)=>{
+          $(".lang_choices").append(`<input type="checkbox" name="language" value="${lang}">${lang}`)
+        })
+        $.each(data.years,(index,year)=>{
+          $('.year_choices').append(`<input type="checkbox" name="year" value="${year}">${year}`)
+        })
+      });
+    }
+  )
+
+  $("#confirmePopup").on("click",()=>{
+    let selectedLang = $('input[name="language"]:checked').map(function() {return $(this).val();}).get();
+    let selectedAnno = $('input[name="annotations"]:checked').map(function() {return $(this).val();}).get();
+    let selectedYear = $('input[name="year"]:checked').map(function() {return $(this).val();}).get();
+    
+    if (selectedLang.length>0 || selectedAnno.length>0 || selectedYear.length>0){
+      axios.get('../requests/reqFilesFiltres.php',{
+        params:{
+          languages:selectedLang,
+          Annotations:selectedAnno,
+          years:selectedYear,
+        }
+      }).then(function(response){
+        $(".content").empty()
+        data=response.data.message;
+        if (data.length>0){
+          tablehead=`<thead><tr><th colspan='6'>La Liste des Fichiers<button class="filtre">Filtrer la liste</button></th></tr></ul></thead>`
+          tabletitle=`<tr class="tabletitle"><td>No</td><td>Propriétaire</td><td>Nom_Fichier</td><td>Langage</td><td>Année</td><td>Opération</td></tr>`
+          btn_delete="<button class='supprimer'><i class='iconfont icon-shanchu'></i></button>"
+          btn_afficher="<button class='afficher'><i class='iconfont icon-search'></i></button>"
+          btn_download="<button class='download'><i class='iconfont icon-download'></i></button>"
+          tablelines=""
+          $.each(data,(index,filedata)=>{
+              tablelines+=`<tr><td>${index+1}</td><td>${filedata.username}</td><td>${filedata.filename}</td><td>${filedata.language}</td><td>${filedata.year}</td><td>${btn_afficher}${btn_delete}${btn_download}</td></tr>`
+          })
+          $(".content").html(`<table>${tablehead}<tbody>${tabletitle}${tablelines}</tbody></table>`)
+        }else{
+          $(".content").html(`<table>${tablehead}<tbody>${tabletitle}</tbody></table>`);
+          $(".top").after(`<div class="alert alert-danger" role="alert">On ne trouve aucun fichier qui correspond à votre demande !</div>`)
+          setTimeout(()=>{
+            $('.alert').remove();
+          },2000)
+        }
+      })
+    }
+    $(".overlay").css("display","none")
+    $(".popup").css("display","none")
+  })
+
+  $("#closePopup").on("click",()=>{
+    $(".overlay").css("display","none")
+    $(".popup").css("display","none")
+  })
+
+  // la supprime d'un fichier
+  $(".content").on("click",".supprimer",()=>{
+    let clickedButton=$(event.target).closest("button");
+    let clickedFileProp=clickedButton.parent().parent().children().eq(1).text();
+    let clickedFile=clickedButton.parent().parent().children().eq(2).text()
+
+      if (clickedFileProp==localStorage.getItem('username')){
+        $(".overlay").css("display","block")
+        $(".confirmerPopup").css("display","block")
+        
+        $("#confirmeDel").on("click",function(){
+          if (clickedFile !=undefined){
+            axios.post(`../requests/reqDeleteFile.php`,`filename=${clickedFile}`).then(function(response){
+              $(".overlay").css("display","none")
+              $(".confirmerPopup").css("display","none")
+              if(response.data.status=="success"){
+                getFileList();
+                $(".top").after(`<div class="alert alert-success" role="alert">${response.data.message}</div>`)
+                setTimeout(()=>{
+                  $('.alert').remove();
+                },2000)
+              }else{
+                $(".top").after(`<div class="alert alert-danger" role="alert">${response.data.message}</div>`)
+                setTimeout(()=>{
+                  $('.alert').remove();
+                },2000)
+              }
+            })
+            clickedFile=undefined;
+          }
+        })
+        
+        
+          
+        $("#closeDel").on("click",()=>{
+          clickedFile=undefined;
+          $(".overlay").css("display","none")
+          $(".confirmerPopup").css("display","none")
+        })
+      
+      }else{
+        $(".top").after(`<div class="alert alert-danger" role="alert">Vous ne pouvez pas supprimer un fichier des autres !</div>`)
+        setTimeout(()=>{
+          $('.alert').remove();
+        },2000)
+      }    
+  })
+
+  // l'affichage du fichier
+  $(".content").on("click",".afficher",()=>{
+    let clickedButton=$(event.target).closest("button");
+    let clickedFileProp=clickedButton.parent().parent().children().eq(1).text();
+    let clickedFile=clickedButton.parent().parent().children().eq(2).text()
+
+    if (clickedFile !=undefined){
+      axios.post(`../requests/reqShowFile.php`,`filename=${clickedFile}`).then(function(response){
+        if(response.data.status=="success"){
+          data=response.data.message;
+          window.location.href = `./visualisation.html?data=${encodeURIComponent(data)}`;
+        }else{
+          $(".top").after(`<div class="alert alert-danger" role="alert">${response.data.message}</div>`)
+          setTimeout(()=>{
+            $('.alert').remove();
+          },2000)
+        }
+      }).catch(function(error){
+        $(".top").after(`<div class="alert alert-danger" role="alert">erreur !</div>`)
+        setTimeout(()=>{
+          $('.alert').remove();
+        },2000)
+      })
+      clickedFile=undefined;
+    }
+  })
+
+  $(document).on('DOMContentLoaded',function(){
+      // récupérer le paramètre de la page rechercher.html
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('data') != undefined){
+        const search_data = JSON.parse(urlParams.get('data'));
+        console.log(search_data)
+        $(".content").empty();
+        tablehead=`<thead><tr><th colspan='6'>La Liste des Fichiers<button class="filtre">Filtrer la liste</button></th></tr></ul></thead>`
+        tabletitle=`<tr class="tabletitle"><td>No</td><td>Propriétaire</td><td>Nom_Fichier</td><td>Langage</td><td>Année</td><td>Opération</td></tr>`
+        btn_delete="<button class='supprimer'><i class='iconfont icon-shanchu'></i></button>"
+        btn_afficher="<button class='afficher'><i class='iconfont icon-search'></i></button>"
+        btn_download="<button class='download'><i class='iconfont icon-download'></i></button>"
+        tablelines=""
+        $.each(search_data,(index,filedata)=>{
+            tablelines+=`<tr><td>${index+1}</td><td>${filedata.username}</td><td>${filedata.filename}</td><td>${filedata.language}</td><td>${filedata.year}</td><td>${btn_afficher}${btn_delete}${btn_download}</td></tr>`
+        })
+        $(".content").html(`<table>${tablehead}<tbody>${tabletitle}${tablelines}</tbody></table>`)
+      }else{
+        $(getFileList);
+      }
+  });
+
+  // télécharger le fichier
+  $(".content").on("click",".download",()=>{
+    let clickedButton=$(event.target).closest("button");
+    let clickedFile=clickedButton.parent().parent().children().eq(2).text()
+
+        $(".overlay").css("display","block")
+        $(".downloadPopup").css("display","block")
+        
+        $("#confirmDownload").on("click",function(){
+          let format=$('input[name="format"]:checked').val();
+          if (format && clickedFile !=undefined){
+            axios.post(`../requests/reqDownloadFile.php`,`filename=${clickedFile}&format=${format}`).then(function(response){
+              $(".overlay").css("display","none")
+              $(".downloadPopup").css("display","none")
+              
+              
+            })
+            clickedFile=undefined;
+          }
+        })
+        
+        
+          
+        $("#closeDownload").on("click",()=>{
+          clickedFile=undefined;
+          $(".overlay").css("display","none")
+          $(".downloadPopup").css("display","none")
+        })
+      
+  
+  })
+  $(".logout-area button").on("click",()=>{
+    localStorage.removeItem('token')
+    window.location.href="../index.html"
+  })
+</script>
+</html>

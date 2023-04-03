@@ -1,0 +1,32 @@
+.content .formChoices{
+    height: 75px;
+    margin: 20px 0 20px 20px;
+    font-size: 15px;
+    font-family: "Alloyink";
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.content .formChoices button{
+    width: 180px;
+    background-color: transparent;
+    border-radius: 15%;
+    border: 3px solid #8e7e7e;
+}
+
+.content .formChoices .active{
+    background-color: rgb(62, 221, 215);
+}
+
+.content .formChoices .default{
+    background-color: rgb(231, 243, 126);
+}
+
+.content .view-area th{
+    font-size: 16px;
+}
+
+.vis-network{
+    height: 500px !important;
+}
