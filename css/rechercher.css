@@ -1,0 +1,16 @@
+#confirmeChercher{
+    background-color: greenyellow;
+    border-radius: 15%;
+    border: 3px solid #8e7e7e;
+    margin-right: 30px;
+}
+
+#closeChercher{
+    background-color: transparent;
+    border-radius: 15%;
+    border: 3px solid #8e7e7e;
+}
+
+.content .buttons{
+    margin-top: 30px;
+}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>CONLL-U</title>
+  <script type="text/javascript" src="../js/jquery-3.6.1.min.js"></script>
+  <!-- importer le bootstrap -->
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <script src="../js/bootstrap.min.js"></script>
+  <!-- importer le home.css -->
+  <link rel="stylesheet" href="../css/home.css">
+  <!-- importer axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../js/axios.js"></script>
+  <!-- importer le iconfont.css -->
+  <link rel="stylesheet" href="../font/iconfont/iconfont.css">
+  <!-- importer le fichier.css -->
+  <link rel="stylesheet" href="../css/fichiers.css">
+  <!-- importer le inserer.css -->
+  <link rel="stylesheet" href="../css/inserer.css">
+</head>
+<body>
+  <div class="cover"></div>
+  <div class="top">
+    <div class="box-top">
+      <h1 class="title">CoNLL-U</h1>
+      <div class="logout-area">
+        <div class="userinfo"></div>
+        <div>
+          <button type="button" class="btn btn-default btn-md" value="logout">
+            <svg t="1680019731901" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2592" width="30" height="30"><path d="M85.333333 256a85.333333 85.333333 0 0 1 85.333334-85.333333h384a85.333333 85.333333 0 0 1 85.333333 85.333333v85.333333a42.666667 42.666667 0 1 1-85.333333 0V256H170.666667v512h384v-85.333333a42.666667 42.666667 0 1 1 85.333333 0v85.333333a85.333333 85.333333 0 0 1-85.333333 85.333333H170.666667a85.333333 85.333333 0 0 1-85.333334-85.333333V256z m652.501334 97.834667a42.666667 42.666667 0 0 1 60.330666 0l128 128a42.666667 42.666667 0 0 1 0 60.330666l-128 128a42.666667 42.666667 0 0 1-60.330666-60.330666L793.002667 554.666667H384a42.666667 42.666667 0 1 1 0-85.333334h409.002667l-55.168-55.168a42.666667 42.666667 0 0 1 0-60.330666z" fill="#2c2c2c" p-id="2593"></path></svg></span>
+          </button>
+        </div> 
+      </div>
+    </div>  
+  </div>
+  <div class="main upload-area">
+    <div class="choices">
+        <button class="home-btn">HOME</button>
+        <button class="fichiers-btn">FICHIERS</button>
+        <button class="active">INSERER</button>
+        <button class="rechercher-btn">RECHERCHER</button>
+    </div>
+    
+    <div class="content">
+        <form id="uploadForm">
+            <!-- <label for="name">Nom du fichier :</label>
+            <input type="text" id="filename" placeholder="Veuillez saisir le nom du fichier avec l'extension .conllu"> -->
+
+            <label for="language">Langue :</label>
+            <input type="text" name="language" id="language" placeholder="Veuillez saisir la langue de ce fichier">
+
+            <label for="annotations">Annotations disponibles :</label>
+            <div class="anno_choices">
+                <input type="checkbox" name="IDTOK" value="IDTOK" checked>IDTOK
+                <input type="checkbox" name="FORM" value="FORM" checked>FORM
+                <input type="checkbox" name="LEMMA" value="LEMMA" checked>LEMMA
+                <input type="checkbox" name="UPOS" value="UPOS" checked>UPOS
+                <input type="checkbox" name="XPOS" value="XPOS">XPOS
+                <input type="checkbox" name="FEATS" value="FEATS">FEATS
+                <input type="checkbox" name="HEAD" value="HEAD" checked>HEAD
+                <input type="checkbox" name="DEPREL" value="DEPREL" checked>DEPREL
+                <input type="checkbox" name="DEPS" value="DEPS">DEPS
+                <input type="checkbox" name="MISC" value="MISC">MISC
+            </div>
+            
+            <label for="year">Année :</label>
+            <select id="year" name="year"></select>
+
+            <label for="file">Sélectionner un fichier :</label>
+            <input type="file" id="file" name="file" accept=".conllu">
+            
+            <div class="buttons">
+                <button id="confirmeInserer">Confirmer</button>
+                <button id="closeInserer">Supprimer</button>
+            </div>
+        </form>
+    </div>  
+  </div>
+</body>
+
+<script>
+  // obtenir le nom de l'utilisateur
+  $(function() {
+    if (localStorage.getItem('username')){
+      $(".userinfo").text("Bienvenue, "+localStorage.getItem('username'));
+    }  
+  });
+
+  $(function() {
+    $("#year").empty();
+    for (i=2023;i>=2000;i--){
+        $("#year").append(`<option value='${i}'}>${i}</option>`)
+    }
+  });
+
+  $(".home-btn").on({
+    "click":()=>window.location.href="./home.html"
+  })
+  $(".fichiers-btn").on({
+    "click":()=>window.location.href="./fichiers.html"
+  })
+  $(".rechercher-btn").on({
+    "click":()=>window.location.href="./rechercher.html"
+  })
+
+  // insérer le fichier
+  $('#confirmeInserer').on("click",function(event){
+    event.preventDefault();
+    if($('#uploadForm input[type="checkbox"]:checked').length>0 && $('#language').val() && $('#file')[0].files[0]){
+      let formData = new FormData($('#uploadForm')[0]);
+      formData.append('username',localStorage.getItem('username'));
+  
+      axios.post(`../requests/reqUploadFile.php`,formData,{
+        headers:{
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((response)=>{
+        console.log(response.data)
+        if (response.data.status=="success"){
+          $(".top").after(`<div class="alert alert-success" role="alert">${response.data.message}</div>`)
+          setTimeout(()=>{
+            $('.alert').remove();
+            window.location.href="./fichiers.html"
+          },2000)
+        }else{
+          $(".top").after(`<div class="alert alert-danger" role="alert">${response.data.message}</div>`)
+          setTimeout(()=>{
+            $('.alert').remove();
+          },2000)
+        }
+      }).catch(error => {
+        $(".top").after(`<div class="alert alert-danger" role="alert">erreur!</div>`)
+        setTimeout(()=>{
+          $('.alert').remove();
+        },2000)
+      });      
+    }
+  })
+
+  $('#closeInserer').on("click",function(event){
+    event.preventDefault();
+    window.location.href="./fichiers.html"
+  })
+  $(".logout-area button").on("click",()=>{
+    localStorage.removeItem('token')
+    window.location.href="../index.html"
+  })
+</script>
+</html>

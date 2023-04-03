@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>CONLL-U</title>
+  <script type="text/javascript" src="../js/jquery-3.6.1.min.js"></script>
+  <!-- importer le bootstrap -->
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <script src="../js/bootstrap.min.js"></script>
+  <!-- importer le home.css -->
+  <link rel="stylesheet" href="../css/home.css">
+  <!-- importer axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../js/axios.js"></script>
+  <!-- importer le iconfont.css -->
+  <link rel="stylesheet" href="../font/iconfont/iconfont.css">
+  <!-- importer le fichier.css -->
+  <link rel="stylesheet" href="../css/fichiers.css">
+  <!-- importer le inserer.css -->
+  <link rel="stylesheet" href="../css/inserer.css">
+  <!-- importer le rechercher.css -->
+  <link rel="stylesheet" href="../css/rechercher.css">
+</head>
+<body>
+  <div class="cover"></div>
+  <div class="top">
+    <div class="box-top">
+      <h1 class="title">CoNLL-U</h1>
+      <div class="logout-area">
+        <div class="userinfo"></div>
+        <div>
+          <button type="button" class="btn btn-default btn-md" value="logout">
+            <svg t="1680019731901" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2592" width="30" height="30"><path d="M85.333333 256a85.333333 85.333333 0 0 1 85.333334-85.333333h384a85.333333 85.333333 0 0 1 85.333333 85.333333v85.333333a42.666667 42.666667 0 1 1-85.333333 0V256H170.666667v512h384v-85.333333a42.666667 42.666667 0 1 1 85.333333 0v85.333333a85.333333 85.333333 0 0 1-85.333333 85.333333H170.666667a85.333333 85.333333 0 0 1-85.333334-85.333333V256z m652.501334 97.834667a42.666667 42.666667 0 0 1 60.330666 0l128 128a42.666667 42.666667 0 0 1 0 60.330666l-128 128a42.666667 42.666667 0 0 1-60.330666-60.330666L793.002667 554.666667H384a42.666667 42.666667 0 1 1 0-85.333334h409.002667l-55.168-55.168a42.666667 42.666667 0 0 1 0-60.330666z" fill="#2c2c2c" p-id="2593"></path></svg></span>
+          </button>
+        </div> 
+      </div>
+    </div>  
+  </div>
+  <div class="main">
+    <div class="choices">
+        <button class="home-btn">HOME</button>
+        <button class="fichiers-btn">FICHIERS</button>
+        <button class="active">RECHERCHER</button>
+    </div>
+    
+    <div class="content">
+        <form id="searchForm">
+            <label for="forme">Forme :</label>
+            <input id="forme" type="text" placeholder="Veuillez saisir la forme à chercher">
+
+            <label for="lemme">Lemme :</label>
+            <input id="lemme" type="text" placeholder="Veuillez saisir le lemme à chercher">
+
+            <label for="upos">UPOS :</label>
+            <input id="upos" type="text" placeholder="Veuillez saisir le UPOS à chercher">
+
+            <label for="feats">Feats :</label>
+            <input id="feats" type="text" placeholder="Veuillez saisir le feat à chercher">
+
+            <label for="structure">Structure :</label>
+            <input id="structure" type="text" placeholder="Veuillez saisir la structure à chercher">
+            
+            <div class="buttons">
+                <button id="confirmeChercher">Confirmer</button>
+                <button id="closeChercher">Supprimer</button>
+            </div>
+        </form>
+    </div>  
+  </div>
+</body>
+
+<script>
+  // obtenir le nom de l'utilisateur
+  $(function() {
+    if (localStorage.getItem('username')){
+      $(".userinfo").text("Bienvenue, "+localStorage.getItem('username'));
+    }  
+  });
+
+  $(".home-btn").on({
+    "click":()=>window.location.href="./home.html"
+  })
+  $(".fichiers-btn").on({
+    "click":()=>window.location.href="./fichiers.html"
+  })
+
+  $("#confirmeChercher").on("click",(event)=>{
+    event.preventDefault();
+    const forme=$("#forme").val();
+    const lemme = $('#lemme').val();
+    const upos = $('#upos').val();
+    const feats = $('#feats').val();
+    const structure = $('#structure').val();
+    axios.post('../requests/reqSearchFile.php',`forme=${forme}&lemme=${lemme}&upos=${upos}&feats=${feats}&structure=${structure}`).then((response)=>{
+      data=JSON.stringify(response.data.message);
+      window.location.href = `./fichiers.html?data=${encodeURIComponent(data)}`;
+    }).catch(function(error) {
+      $(".top").after(`<div class="alert alert-danger" role="alert">erreur!</div>`)
+      setTimeout(()=>{
+        $('.alert').remove();
+      },2000)
+    });
+  })
+
+  $(".logout-area button").on("click",()=>{
+    localStorage.removeItem('token')
+    window.location.href="../index.html"
+  })
+</script>
+</html>

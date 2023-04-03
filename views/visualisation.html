@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>CONLL-U</title>
+  <script type="text/javascript" src="../js/jquery-3.6.1.min.js"></script>
+  <!-- importer le bootstrap -->
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <script src="../js/bootstrap.min.js"></script>
+  <!-- importer le home.css -->
+  <link rel="stylesheet" href="../css/home.css">
+  <!-- importer axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="../js/axios.js"></script>
+  <!-- importer le iconfont.css -->
+  <link rel="stylesheet" href="../font/iconfont/iconfont.css">
+  <!-- importer le fichier.css -->
+  <link rel="stylesheet" href="../css/fichiers.css">
+  <!-- importer le visualisation.css -->
+  <link rel="stylesheet" href="../css/visualiser.css">
+  <!-- importer le jssyntaxtree.min.js -->
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+<body>
+  <div class="cover"></div>
+  <div class="top">
+    <div class="box-top">
+      <h1 class="title">CoNLL-U</h1>
+      <div class="logout-area">
+        <div class="userinfo"></div>
+        <div>
+          <button type="button" class="btn btn-default btn-md" value="logout">
+            <svg t="1680019731901" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2592" width="30" height="30"><path d="M85.333333 256a85.333333 85.333333 0 0 1 85.333334-85.333333h384a85.333333 85.333333 0 0 1 85.333333 85.333333v85.333333a42.666667 42.666667 0 1 1-85.333333 0V256H170.666667v512h384v-85.333333a42.666667 42.666667 0 1 1 85.333333 0v85.333333a85.333333 85.333333 0 0 1-85.333333 85.333333H170.666667a85.333333 85.333333 0 0 1-85.333334-85.333333V256z m652.501334 97.834667a42.666667 42.666667 0 0 1 60.330666 0l128 128a42.666667 42.666667 0 0 1 0 60.330666l-128 128a42.666667 42.666667 0 0 1-60.330666-60.330666L793.002667 554.666667H384a42.666667 42.666667 0 1 1 0-85.333334h409.002667l-55.168-55.168a42.666667 42.666667 0 0 1 0-60.330666z" fill="#2c2c2c" p-id="2593"></path></svg></span>
+          </button>
+        </div> 
+      </div>
+    </div>  
+  </div>
+  <div class="main">
+    <div class="choices">
+        <button class="home-btn">HOME</button>
+        <button class="fichiers-btn">FICHIERS</button>
+        <button class="active">VISUALISATION</button>
+        <button class="rechercher-btn">RECHERCHER</button>
+    </div>
+    
+    <div class="content">
+      <div class="formChoices">
+        <button id="tableau" class="active">Tableau</button>
+        <button id="texte" class="default">Texte</button>
+        <button id="texte-colore" class="default">Texte Coloré selon les POS</button>
+        <button id="graphique" class="default">Représentation Graphique des Dépendances</button>
+      </div>
+      <div id="view-area" class="view-area">
+
+      </div>
+    </div>  
+  </div>
+</body>
+
+<script>
+  // obtenir le nom de l'utilisateur
+  $(function() {
+    if (localStorage.getItem('username')){
+      $(".userinfo").text("Bienvenue, "+localStorage.getItem('username'));
+    }  
+  });
+
+  $(".home-btn").on({
+    "click":()=>window.location.href="./home.html"
+  })
+  $(".rechercher-btn").on({
+    "click":()=>window.location.href="./rechercher.html"
+  })
+  $(".fichiers-btn").on({
+    "click":()=>window.location.href="./fichiers.html"
+  })
+
+  function parseConlluToTable(data) {
+    const rows = data.trim().split('\n');
+    // créer un nouveau tableau
+    const table = [];
+  
+    // parcourt chaque ligne
+    rows.forEach(row => {
+      const cols = row.split(" ").filter(elem => elem.trim().length > 0);
+      // si c'est une ligne de commentaire ou une ligne vide
+      if (cols[0].startsWith('#') || cols[0] === '') {
+        return;
+      }
+      table.push([]);
+      table[table.length - 1].push(cols);
+    });
+  
+    // un string pour stocker le tableau final
+    let html = '';
+  
+    table.forEach(sentence => {
+      html += '<tr>';
+      sentence.forEach(word => {
+        word.forEach(prop => {
+          html += '<td>' + prop + '</td>';
+        });
+      });
+      html += '</tr>';
+    });
+    return html;
+  }
+
+  function parseConlluToText(data){
+    const rows = data.trim().split('\n');
+    let text="<div>";
+    rows.map(row=>{
+      if (row.startsWith('#') || row === '') {
+        return;
+      }else{
+        const cells = row.split(/\s+/);
+        text+="<p>"+cells.join(' ')+"</p>";
+      }
+    });
+    text+="</div>";
+    return text;
+  }
+
+  function parseConlluToColorText(data){
+    const posColors = {
+      PRON: '#ff9999',
+      VERB: '#66cc99',
+      CONJ: '#cccccc',
+      NOUN: '#ffcc99',
+      PUNCT: '#999999',
+      ADJ: '#ffccff',
+      ADV: '#ffffcc',
+      ADP: '#cc99ff',
+      NUM: '#99ccff',
+      DET: '#ccffcc',
+      X: '#cccccc',
+      SYM: '#cccccc'
+    };
+    const rows = data.trim().split('\n');
+    let text="<div>";
+    rows.map(row=>{
+      if (row.startsWith('#') || row === '') {
+        return;
+      }else{
+        const cells = row.split(/\s+/);
+        const pos=cells[3]
+        text+=`<p style="color:${posColors[pos]}">${cells.join(' ')}</p>`;
+      }
+    });
+    text+="</div>";
+    return text;
+  }
+  
+  function parseConlluToGraphique(data){
+    let nodes=new vis.DataSet([]);
+    let edges = new vis.DataSet([]);
+    const lines=data.trim().split('\n');
+
+    const rows = [];
+    // parcourt chaque ligne
+    lines.forEach(line => {
+      const cols = line.split(" ").filter(elem => elem.trim().length > 0);
+      // si c'est une ligne de commentaire ou une ligne vide
+      if (cols[0].startsWith('#') || cols[0] === '') {
+        return;
+      }
+      rows.push([]);
+      rows[rows.length - 1].push(cols);
+    });
+
+    for (let i = 0; i < rows.length; i++) {
+      let fields = rows[i][0];
+      let id = parseInt(fields[0]);
+      let label = fields[1];
+      let dep = fields[7];
+      nodes.add({id: id, label: label});
+
+      if (dep != "root") {
+          let from = parseInt(fields[6]);
+          edges.add({from: from, to: id, label: dep});
+      }
+    }
+
+    let graphique_data={
+      nodes: nodes,
+      edges: edges
+    };
+    let options = {
+        layout: {
+            hierarchical: {
+                direction: "LR"
+            }
+        },
+        edges: {
+            arrows: {
+                to: {enabled: true, scaleFactor:1, type:'arrow'}
+            }
+        }
+    };
+
+    let container = document.getElementById("view-area");
+    let network = new vis.Network(container, graphique_data, options);
+  }
+
+  // obtenir le data envoyé
+  const urlParams = new URLSearchParams(window.location.search);
+  const data = urlParams.get('data');
+  let tableContent = parseConlluToTable(data);
+  let table=`<table><thead><tr><th>ID</th><th>FORM</th><th>LEMMA</th><th>UPOS</th><th>XPOS</th><th>FEATS</th><th>HEAD</th><th>DEPREL</th><th>DEPS</th><th>MISC</th></tr>
+  </thead>${tableContent}</table>`
+  $('.view-area').append(table);
+
+  $("#tableau").on("click",(event)=>{
+    $('.view-area').empty();
+    $(".formChoices button").removeAttr("class").addClass('default');
+    $(event.target).removeAttr("class").addClass('active');
+    let tableContent = parseConlluToTable(data);
+    let table=`<table><thead><tr><th>ID</th><th>FORM</th><th>LEMMA</th><th>UPOS</th><th>XPOS</th><th>FEATS</th><th>HEAD</th><th>DEPREL</th><th>DEPS</th><th>MISC</th></tr>
+		</thead>${tableContent}</table>`
+    $('.view-area').append(table);
+  })
+
+  $("#texte").on("click",(event)=>{
+    $('.view-area').empty();
+    $(".formChoices button").removeAttr("class").addClass('default');
+    $(event.target).removeAttr("class").addClass('active');
+    let text=parseConlluToText(data);
+    $('.view-area').append(text);
+  })
+
+  $("#texte-colore").on("click",(event)=>{
+    $('.view-area').empty();
+    $(".formChoices button").removeAttr("class").addClass('default');
+    $(event.target).removeAttr("class").addClass('active');
+    let texte_colore=parseConlluToColorText(data);
+    $('.view-area').append(texte_colore);
+  })
+
+  $(document).on('DOMContentLoaded', function() {
+    $("#graphique").on("click",(event)=>{
+      $('.view-area').empty();
+      $(".formChoices button").removeAttr("class").addClass('default');
+      $(event.target).removeAttr("class").addClass('active');
+      parseConlluToGraphique(data)
+    })
+  });
+  $(".logout-area button").on("click",()=>{
+    localStorage.removeItem('token')
+    window.location.href="../index.html"
+  })
+</script>
+</html>

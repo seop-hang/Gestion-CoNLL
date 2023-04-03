@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="./css/login.css">
+  <script type="text/javascript" src="./js/jquery-3.6.1.min.js"></script>
+  <!-- importer axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="./js/axios.js"></script>
+</head>
+<body>
+  <form>
+    <h1 style="text-align: center">Login</h1>
+
+    <div>
+      <label for="Username">Username</label>
+      <input type="text" name="username" id="username" required>
+    </div>
+    
+    <div>
+      <label for="Password">Password</label>
+      <input type="password" name="password" id="password" required>
+    </div>
+    
+
+    <label for="remember">
+      <input type="checkbox" name="remember" id="remember">
+      Remember me
+    </label>
+
+    <div id="res"></div>
+
+    <input type="button" value="Login" id="login">
+    <button type="button" id="register">Vous n'avez pas de compte ?</button>
+  </form>
+</body>
+<script>
+  //vérifier si on a stocker le username et password dans le localstorage
+  $(function() {
+    if (localStorage.getItem('username') && localStorage.getItem('password')){
+      $("#username").val(localStorage.getItem('username'));
+      $("#password").val(atob(localStorage.getItem('password')));
+      $("#remember").prop("checked",true);
+    }
+  });
+
+  $("#login").on({
+    "click":function(){
+      if ($("#username").val() && $("#password").val()){
+        axios.post('./requests/reqLogin.php','username=' + $("#username").val()+"&password="+$("#password").val(),{
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).then(function(reponse) {
+          reponse=reponse.data
+          if (reponse.status=="success"){
+            if ($("#remember").prop("checked")){
+              localStorage.setItem('username',$("#username").val());
+              //densifier le password
+              localStorage.setItem('password',btoa($("#password").val()));
+            }
+            //affichier le résultat de la requête
+            $("#res").empty();
+            $("#res").html(`<span style="color:green">${reponse.message}</span>`)
+            setTimeout(()=>{
+              window.location.href="./views/home.html";
+            },1000)
+          }else{
+            $("#res").empty();
+            $("#res").html(`<span style="color:red">${reponse.message}</span>`)
+          }
+        })
+      }
+    }
+  })
+
+  $("#register").on({
+    "click":function(){
+      window.location.href="./views/register.html";
+    }
+  })
+</script>
+</html>
+
