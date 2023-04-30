@@ -1,5 +1,9 @@
 <?php
-        
+        $response = array(
+            "status" => "",
+            "message" => "",
+        );
+
         if (isset($_POST['filename']) && isset($_POST['format'])) {
             $file_name = "../stock/".$_POST['filename'];
             $format=$_POST['format'];
@@ -26,52 +30,39 @@
 
             
             if ($format=="TXT"){
+                $download_name=explode(".",$_POST['filename'])[0].'.txt';
                 // Exporter le contenu du fichier au format texte
-                $text_file_name = '../stock/test2.txt';
+                $text_file_name = '../stock/'.$download_name;
                 $text_file_handle = fopen($text_file_name, 'w');
 
-                foreach ($file_content as $line) {
-                    // Retirer les annotations CoNLL-U de la ligne
-                    $line = preg_replace('/\t.*$/', '', $line);
-                    
+                foreach ($file_content as $line) {                    
                     // Écrire la ligne dans le fichier texte
                     fwrite($text_file_handle, $line . "\n");
                 }
-
+                
                 // Fermer le fichier texte
                 fclose($text_file_handle);
-                
 
-                // Télécharger le fichier texte
-                header('Content-Disposition: attachment; filename="'. $_POST['filename'].'"' );
-                header('Content-Type: text/plain');
-                header('Content-Length: ' . filesize($text_file_name));
-                header("Content-Disposition","attachment");
-                header("Pragma:No-cache");
-                header("Cache-Control:No-cache");
-                header("Expires:0");
-                readfile($text_file_name);
+                $response["status"]="success";
+                $response["message"]=$download_name;  
             }
-
+            
             if ($format=="CoNLL-U"){
-
-
-
+                $download_name=explode(".",$_POST['filename'])[0].'.conllu';
                 // Vérifier que le fichier a été ouvert avec succès
                 if ($file_handle === false) {
                     die('Impossible d\'ouvrir le fichier ' . $_POST['filename']);
                 }
 
-                // Envoyer les en-têtes HTTP pour le téléchargement du fichier
-                header('content-disposition: attachment; filename="' .$file_name.'"');
-                header('Content-Type: application/x-conll');
-
-                // Envoyer le contenu du fichier CoNLL-U au navigateur
-                readfile($file_name);
-
-                // Fermer le fichier
-                fclose($file_handle);
-
+                $response["status"]="success";
+                $response["message"]=$download_name;
             }
         }
+
+        // transformer le format à JSON
+        $json_response = json_encode($response);
+
+        header("Content-Type: application/json;charset=utf-8");
+        // envoyer la réponse
+        echo $json_response;
 ?>

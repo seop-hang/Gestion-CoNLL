@@ -1,0 +1,5 @@
+1	Il	il	PRON	_	Gender=Masc|Number=Sing|Person=3|PronType=Prs	4	expl:subj	_	SpaceAfter=Yes|Offset=0
+2	est	être	AUX	_	Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin	4	cop	_	SpaceAfter=Yes|Offset=3
+3	un	un	DET	_	Definite=Ind|Gender=Masc|Number=Sing|PronType=Art	4	det	_	SpaceAfter=Yes|Offset=7
+4	professeur	professeur	NOUN	_	Gender=Masc|Number=Sing	4	ROOT	_	SpaceAfter=No|Offset=10
+5	.	.	PUNCT	_	None	4	punct	_	SpaceAfter=Yes|Offset=20

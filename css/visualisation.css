@@ -27,6 +27,10 @@
     font-size: 16px;
 }
 
+.content .view-area tbody{
+    font-size: 14px !important;
+}
+
 .vis-network{
     height: 500px !important;
 }

@@ -303,23 +303,28 @@
           if (format && clickedFile !=undefined){
             axios.post(`../requests/reqDownloadFile.php`,`filename=${clickedFile}&format=${format}`).then(function(response){
               $(".overlay").css("display","none")
-              $(".downloadPopup").css("display","none")
-              
-              
+              $(".downloadPopup").css("display","none");
+              if(response.data.status=="success"){
+                // téléchargement du fichier
+                let file_name=response.data.message;
+                var url = "../stock/"+file_name;
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = file_name;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+              }
             })
             clickedFile=undefined;
           }
         })
-        
-        
-          
+                  
         $("#closeDownload").on("click",()=>{
           clickedFile=undefined;
           $(".overlay").css("display","none")
           $(".downloadPopup").css("display","none")
-        })
-      
-  
+        }) 
   })
   $(".logout-area button").on("click",()=>{
     localStorage.removeItem('token')
