@@ -1,6 +1,5 @@
 // un set pour éviter la requête répétée
 axios.interceptors.request.use(function (config) {
-  console.log(config.data)
     const token = localStorage.getItem('token');
     if (token) {
     config.headers.Authorization = `Bearer ${token}`;

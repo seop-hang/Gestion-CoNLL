@@ -17,7 +17,7 @@
   <!-- importer le fichier.css -->
   <link rel="stylesheet" href="../css/fichiers.css">
   <!-- importer le visualisation.css -->
-  <link rel="stylesheet" href="../css/visualiser.css">
+  <link rel="stylesheet" href="../css/visualisation.css">
   <!-- importer le jssyntaxtree.min.js -->
   <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 </head>
@@ -83,7 +83,7 @@
   
     // parcourt chaque ligne
     rows.forEach(row => {
-      const cols = row.split(" ").filter(elem => elem.trim().length > 0);
+      const cols = row.split("\t").filter(elem => elem.trim().length > 0);
       // si c'est une ligne de commentaire ou une ligne vide
       if (cols[0].startsWith('#') || cols[0] === '') {
         return;
@@ -160,7 +160,7 @@
     const rows = [];
     // parcourt chaque ligne
     lines.forEach(line => {
-      const cols = line.split(" ").filter(elem => elem.trim().length > 0);
+      const cols = line.split("\t").filter(elem => elem.trim().length > 0);
       // si c'est une ligne de commentaire ou une ligne vide
       if (cols[0].startsWith('#') || cols[0] === '') {
         return;
@@ -208,7 +208,7 @@
   const data = urlParams.get('data');
   let tableContent = parseConlluToTable(data);
   let table=`<table><thead><tr><th>ID</th><th>FORM</th><th>LEMMA</th><th>UPOS</th><th>XPOS</th><th>FEATS</th><th>HEAD</th><th>DEPREL</th><th>DEPS</th><th>MISC</th></tr>
-  </thead>${tableContent}</table>`
+  </thead><tbody>${tableContent}</tbody></table>`
   $('.view-area').append(table);
 
   $("#tableau").on("click",(event)=>{
@@ -217,7 +217,7 @@
     $(event.target).removeAttr("class").addClass('active');
     let tableContent = parseConlluToTable(data);
     let table=`<table><thead><tr><th>ID</th><th>FORM</th><th>LEMMA</th><th>UPOS</th><th>XPOS</th><th>FEATS</th><th>HEAD</th><th>DEPREL</th><th>DEPS</th><th>MISC</th></tr>
-		</thead>${tableContent}</table>`
+		</thead><tbody>${tableContent}</tbody></table>`
     $('.view-area').append(table);
   })
 
