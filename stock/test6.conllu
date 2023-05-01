@@ -1,0 +1,20 @@
+# sent_id = 1
+# text = 我们 可以 用 中文 来 写 程序 。
+1	我们	我们	PRON	_	_	2	nsubj	_	_
+2	可以	可以	VERB	_	_	0	root	_	_
+3	用	用	ADP	_	_	4	case	_	_
+4	中文	中文	NOUN	_	_	2	obj	_	_
+5	来	来	VERB	_	_	2	advcl	_	_
+6	写	写	VERB	_	_	5	xcomp	_	_
+7	程序	程序	NOUN	_	_	6	obj	_	_
+8	。	。	PUNCT	_	_	2	punct	_	_
+
+# sent_id = 2
+# text = 这 是 第 二 句 话 。
+1	这	这	PRON	_	_	2	nsubj	_	_
+2	是	是	VERB	_	_	0	root	_	_
+3	第	第	NOUN	_	_	4	case	_	_
+4	二	二	NUM	_	_	2	obl	_	_
+5	句	句	NOUN	_	_	4	flat	_	_
+6	话	话	NOUN	_	_	2	obj	_	_
+7	。	。	PUNCT	_	_	2	punct	_	_

@@ -47,7 +47,7 @@ if (isset($_POST['username']) && isset($_POST['language']) && isset($_POST['year
                     $cols = array_filter(explode("\t", trim($row)), function($elem) {
                         return strlen(trim($elem)) > 0;
                     });
-                    if (strpos($cols[0], '#') === 0 || $cols[0] === '') {
+                    if (empty($cols) || strpos($cols[0], '#') === 0 || $cols[0] === '') {
                         continue;
                     }else{
                         array_push($content,$cols);

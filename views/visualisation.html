@@ -83,9 +83,12 @@
   
     // parcourt chaque ligne
     rows.forEach(row => {
-      const cols = row.split("\t").filter(elem => elem.trim().length > 0);
+      let cols = row.split("\t").filter(elem => elem.trim().length > 0);
+      if (cols.length === 0) {
+        cols=[" "," "," "," "," "," "," "," "," "," "]
+      }
       // si c'est une ligne de commentaire ou une ligne vide
-      if (cols[0].startsWith('#') || cols[0] === '') {
+      if (cols[0].startsWith('#')) {
         return;
       }
       table.push([]);
@@ -94,11 +97,13 @@
   
     // un string pour stocker le tableau final
     let html = '';
-  
     table.forEach(sentence => {
-      html += '<tr>';
+      html += '<tr">';
       sentence.forEach(word => {
         word.forEach(prop => {
+          if (prop==" "){
+            html += '<td style="height:23px">' + prop + '</td>';
+          }
           html += '<td>' + prop + '</td>';
         });
       });
@@ -153,59 +158,85 @@
   }
   
   function parseConlluToGraphique(data){
-    let nodes=new vis.DataSet([]);
-    let edges = new vis.DataSet([]);
     const lines=data.trim().split('\n');
-
-    const rows = [];
-    // parcourt chaque ligne
+  
+    let sentences = [];
+    let sentence=[];
     lines.forEach(line => {
-      const cols = line.split("\t").filter(elem => elem.trim().length > 0);
-      // si c'est une ligne de commentaire ou une ligne vide
-      if (cols[0].startsWith('#') || cols[0] === '') {
+      if (line.startsWith("#")) {
         return;
       }
-      rows.push([]);
-      rows[rows.length - 1].push(cols);
+      if (line === "\r" || line === "") {
+        sentences.push(sentence);
+        sentence = [];
+      } else {
+        sentence.push(line);
+      }
     });
-
-    for (let i = 0; i < rows.length; i++) {
-      let fields = rows[i][0];
-      let id = parseInt(fields[0]);
-      let label = fields[1];
-      let dep = fields[7];
-      nodes.add({id: id, label: label});
-
-      if (dep != "root") {
+    if (sentence.length > 0) {
+      sentences.push(sentence);
+    }
+  
+    for (let i = 0; i < sentences.length; i++) {
+      let nodes=new vis.DataSet([]);
+      let edges = new vis.DataSet([]);
+  
+      const rows = [];
+      // parcourt chaque ligne
+      sentences[i].forEach(line => {
+        const cols = line.split("\t").filter(elem => elem.trim().length > 0);
+        // si c'est une ligne de commentaire ou une ligne vide
+        if (cols[0].startsWith('#') || cols[0] === '') {
+          return;
+        }
+        rows.push([]);
+        rows[rows.length - 1].push(cols);
+      });
+  
+      for (let j = 0; j < rows.length; j++) {
+        let fields = rows[j][0];
+        let id = parseInt(fields[0]);
+        let label = fields[1];
+        let dep = fields[7];
+        nodes.add({id: id, label: label});
+  
+        if (dep != "root") {
           let from = parseInt(fields[6]);
           edges.add({from: from, to: id, label: dep});
+        }
       }
-    }
-
-    let graphique_data={
-      nodes: nodes,
-      edges: edges
-    };
-    let options = {
+  
+      let graphique_data={
+        nodes: nodes,
+        edges: edges
+      };
+      let options = {
         layout: {
-            hierarchical: {
-                direction: "LR"
-            }
+          hierarchical: {
+            direction: "LR"
+          }
         },
         edges: {
-            arrows: {
-                to: {enabled: true, scaleFactor:1, type:'arrow'}
-            }
+          arrows: {
+            to: {enabled: true, scaleFactor:1, type:'arrow'}
+          }
         }
-    };
-
-    let container = document.getElementById("view-area");
-    let network = new vis.Network(container, graphique_data, options);
+      };
+  
+      let container = document.createElement("div");
+      container.id = "view-area-" + i;
+      let view_div = document.getElementById("view-area");
+      view_div.appendChild(container);
+  
+      let network = new vis.Network(container, graphique_data, options);
+    }
   }
+  
 
   // obtenir le data envoyé
   const urlParams = new URLSearchParams(window.location.search);
   const data = urlParams.get('data');
+  console.log(data)
   let tableContent = parseConlluToTable(data);
   let table=`<table><thead><tr><th>ID</th><th>FORM</th><th>LEMMA</th><th>UPOS</th><th>XPOS</th><th>FEATS</th><th>HEAD</th><th>DEPREL</th><th>DEPS</th><th>MISC</th></tr>
   </thead><tbody>${tableContent}</tbody></table>`
