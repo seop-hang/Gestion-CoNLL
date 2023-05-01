@@ -1,0 +1,5 @@
+1	Il	il	PRON	_	Gender=Masc|Number=Sing|Person=3|PronType=Prs	2	nsubj	_	SpaceAfter=Yes|Offset=22
+2	aime	aimer	VERB	_	Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin	0	ROOT	_	SpaceAfter=Yes|Offset=25
+3	bien	bien	ADV	_	None	2	advmod	_	SpaceAfter=Yes|Offset=30
+4	voyager	voyager	VERB	_	VerbForm=Inf	2	xcomp	_	SpaceAfter=No|Offset=35
+5	.	.	PUNCT	_	None	2	punct	_	SpaceAfter=Yes|Offset=42

@@ -44,10 +44,10 @@ if (isset($_POST['username']) && isset($_POST['language']) && isset($_POST['year
                 $rows=explode("\n",trim($file_content));
                 $content=array();
                 foreach ($rows as $row){
-                    $cols = array_filter(explode(" ", trim($row)), function($elem) {
+                    $cols = array_filter(explode("\t", trim($row)), function($elem) {
                         return strlen(trim($elem)) > 0;
                     });
-                    if (strpos($cols[0], '#') === 0 || $cols[0] === '') {
+                    if (empty($cols) || strpos($cols[0], '#') === 0 || $cols[0] === '') {
                         continue;
                     }else{
                         array_push($content,$cols);
